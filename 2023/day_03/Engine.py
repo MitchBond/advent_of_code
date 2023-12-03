@@ -22,7 +22,7 @@ class SymbolPosition:
         in_y_range = abs(self.y - part.y) <= 1
         return in_x_range and in_y_range
 
-    def gear_ratio(self, parts: list[Part]) -> float:
+    def gear_ratio(self, parts: list[Part]) -> int:
         adjacent_parts = [part for part in parts if self.is_adjacent_to(part)]
         return (
             prod([part.number for part in adjacent_parts])

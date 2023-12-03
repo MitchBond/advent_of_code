@@ -3,11 +3,11 @@ from helpers import parse_input
 from Engine import Engine
 
 
-def part_1(engine: Engine) -> float:
+def part_1(engine: Engine) -> int:
     return engine.sum_valid_parts()
 
 
-def part_2(engine: Engine) -> float:
+def part_2(engine: Engine) -> int:
     return engine.gear_ratio()
 
 
