@@ -37,4 +37,3 @@ def inverse_mapped_location(x: int, maps: list[Mapper]) -> int:
     for map in maps[::-1]:
         x = map.inverse(x)
     return x
-
