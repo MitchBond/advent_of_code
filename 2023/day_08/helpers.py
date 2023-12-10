@@ -16,9 +16,6 @@ class Node:
     def map(self, instruction: str) -> str:
         return self.left if instruction == "L" else self.right
 
-    def z_steady_state(self) -> bool:
-        return (self.value[-1] == "Z") and (self.value == self.left) and (self.value == self.right)
-
     def __eq__(self, other):
         return self.value == other.value
 
@@ -37,4 +34,12 @@ def node_cycle(node_map: dict, instructions: str, start_node: Node) -> list[str]
         next_node = node_map[start_node.map(instructions[i % n_instructions])]
         if next_node.value[-1] == "Z":
             print(f"{i}: {next_node.value}")
+    return nodes
+
+
+def execute_instructions(node: Node, node_map: dict, instructions: str) -> list[str]:
+    nodes = []
+    for i in instructions:
+        node = node_map[node.map(i)]
+        nodes += [node.value]
     return nodes
