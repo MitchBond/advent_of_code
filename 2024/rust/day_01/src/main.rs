@@ -27,7 +27,7 @@ fn get_lists(input: String) -> (Vec<i32>, Vec<i32>) {
 }
 
 
-fn part_1(left: Vec<i32>, right: Vec<i32>) -> i32 { 
+fn part_1(left: &Vec<i32>, right: &Vec<i32>) -> i32 { 
     let mut left_sorted = left.clone();
     left_sorted.sort();
     let mut right_sorted = right.clone();
@@ -38,7 +38,7 @@ fn part_1(left: Vec<i32>, right: Vec<i32>) -> i32 {
 
 }
 
-fn part_2(left: Vec<i32>, right: Vec<i32>) -> i32 {
+fn part_2(left: &Vec<i32>, right: &Vec<i32>) -> i32 {
     let right_counts = right.iter().counts();
     return left.iter().map(|x| x * (*right_counts.get(x).unwrap_or(&0) as i32)).sum();
 }
@@ -47,6 +47,6 @@ fn main() {
     let input: String = read_input(false);
     let (left, right) = get_lists(input);
 
-    println!("Part 1: {}", part_1(left.clone(), right.clone()));
-    println!("Part 2: {}", part_2(left.clone(), right.clone()));
+    println!("Part 1: {}", part_1(&left, &right));
+    println!("Part 2: {}", part_2(&left, &right));
 }
