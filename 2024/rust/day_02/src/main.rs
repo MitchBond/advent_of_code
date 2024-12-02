@@ -1,4 +1,6 @@
 use std::fs;
+use itertools::Itertools;
+
 
 fn read_input(is_practice: bool) -> String {
     let file_name: String = if is_practice {
@@ -12,44 +14,38 @@ fn read_input(is_practice: bool) -> String {
     return contents;
 }
 
-    fn diffs(levels: &Vec<i32>) -> Vec<i32> {
-        let mut diffs = Vec::new();
-        let without_first = &levels[1..];
-        let without_last = &levels[..(levels.len() - 1)];
-        for (x, next_x) in without_last.iter().zip(without_first.iter()) {
-            diffs.push(next_x - x);
-        }
-        return diffs;
-    }
-    fn is_valid(levels: &Vec<i32>) -> bool {
-        let diffs = diffs(&levels);
-        let strictly_increasing = diffs.iter().all(|x| x > &0);
-        let strictly_decreasing = diffs.iter().all(|x| x < &0);
-        let max_diff = diffs.iter().all(|x| x.abs() <= 3);
-        return (strictly_increasing || strictly_decreasing) && max_diff;
-    }
+fn is_valid(levels: &Vec<i32>) -> bool {
+    let diffs: Vec<i32> = levels.windows(2).map(|x| x[1] - x[0]).collect();
+    let strictly_increasing = diffs.iter().all(|x| x > &0);
+    let strictly_decreasing = diffs.iter().all(|x| x < &0);
+    let max_diff = diffs.iter().all(|x| x.abs() <= 3);
+    return (strictly_increasing || strictly_decreasing) && max_diff;
+}
 
-    fn is_valid_2(levels: &Vec<i32>) -> bool {
-        if is_valid(&levels) {
-            return true;
-        } else {
-            for i in 0..levels.len() {
-                let mut sublist = levels.clone();
-                sublist.remove(i);
-                if is_valid(&sublist) {
-                    return true;
-                }
+fn is_valid_2(levels: &Vec<i32>) -> bool {
+    if is_valid(&levels) {
+        return true;
+    } else {
+        for i in 0..levels.len() {
+            let mut sublist = levels.clone();
+            sublist.remove(i);
+            if is_valid(&sublist) {
+                return true;
             }
-            return false;
         }
+        return false;
     }
-
+}
 
 fn parse_input(input: String) -> Vec<Vec<i32>> {
     return input
         .split("\n")
-        .map(|line| line.split(" ").map(|num| num.parse::<i32>().unwrap()).collect()).collect();
-
+        .map(|line| {
+            line.split(" ")
+                .map(|num| num.parse::<i32>().unwrap())
+                .collect()
+        })
+        .collect();
 }
 
 fn part_1(input: &Vec<Vec<i32>>) -> usize {
