@@ -20,9 +20,9 @@ fn is_valid_update(update: &Vec<i32>, page_ordering: &HashMap<i32, HashSet<i32>>
         let current_element: i32 = update[i];
         let prior_elements = &update[0..i].to_vec();
         let prior_set: HashSet<i32> = HashSet::from_iter(prior_elements.iter().cloned());
-        let x = page_ordering.get(&current_element).unwrap_or(&empty_hash_set);
+        let pages_after_current = page_ordering.get(&current_element).unwrap_or(&empty_hash_set);
 
-        if  !x.is_disjoint(&prior_set) {
+        if  !pages_after_current.is_disjoint(&prior_set) {
             return false
         }
         
