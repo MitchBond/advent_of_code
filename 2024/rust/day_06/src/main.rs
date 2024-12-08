@@ -24,15 +24,17 @@ fn is_on_boundary(loc: &(i32, i32), grid_size: &(i32, i32)) -> bool {
         || (loc.1 == (grid_size.1 - 1));
 }
 
-
-
-fn get_locations_visited(start_loc: &(usize, usize), grid: &Vec<Vec<char>>, grid_size: &(i32, i32)) -> HashSet<(i32, i32)> {
+fn get_locations_visited(
+    start_loc: &(usize, usize),
+    grid: &Vec<Vec<char>>,
+    grid_size: &(i32, i32),
+) -> HashSet<(i32, i32)> {
     let mut direction: (i32, i32) = (0, -1);
     let mut loc: (i32, i32) = (start_loc.0 as i32, start_loc.1 as i32);
     let mut locations_visited: HashSet<(i32, i32)> = HashSet::new();
     while !is_on_boundary(&loc, grid_size) {
         if grid[(loc.1 + direction.1) as usize][(loc.0 + direction.0) as usize] == '#' {
-            direction = (-direction.1, direction.0);
+            direction = rotate_90(&direction);
         }
         loc = (loc.0 + direction.0, loc.1 + direction.1);
         locations_visited.insert(loc);
@@ -40,82 +42,55 @@ fn get_locations_visited(start_loc: &(usize, usize), grid: &Vec<Vec<char>>, grid
     return locations_visited;
 }
 
-// fn is_cycle_if_turn_here(
-//     loc: &(i32, i32),
-//     direction: &(i32, i32),
-//     grid: &Vec<Vec<char>>,
-//     grid_size: &(i32, i32),
-// ) -> bool {
-//     let mut new_grid = grid.clone();
-//     new_grid[(loc.1 + direction.1) as usize][(loc.0 + direction.0) as usize] = '#';
-//     let mut temp_loc = loc.clone();
-//     let mut temp_direction = direction.clone();
-//     let mut hash_direction_set: HashSet<(i32, i32, i32, i32)> = HashSet::new();
-//     while !is_on_boundary(&temp_loc, grid_size) {
-//         hash_direction_set.insert((temp_loc.0, temp_loc.1, temp_direction.0, temp_direction.1));
-//         if new_grid[(temp_loc.1 + temp_direction.1) as usize]
-//             [(temp_loc.0 + temp_direction.0) as usize]
-//             == '#'
-//         {
-//             temp_direction = rotate_90(&temp_direction);
-//         }
-//         temp_loc = (temp_loc.0 + temp_direction.0, temp_loc.1 + temp_direction.1);
-//         if (temp_loc == *loc) && (temp_direction == *direction) {
-//             return true;
-//         }
-
-//         if hash_direction_set.contains(&(
-//             temp_loc.0,
-//             temp_loc.1,
-//             temp_direction.0,
-//             temp_direction.1,
-//         )) {
-//             return true;
-//         }
-//     }
-
-//     return false;
-// }
-
-fn is_in_cycle(start_loc: &(usize, usize), grid: &Vec<Vec<char>>, grid_size: &(i32, i32)) -> bool {
-    // We're in a cycle if we ever hit the same square in same direction twice
+fn is_in_cycle(
+    start_loc: &(usize, usize),
+    new_grid: Vec<Vec<char>>,
+    grid_size: &(i32, i32),
+) -> bool {
     let mut direction: (i32, i32) = (0, -1);
-    let mut loc: (i32, i32) = (start_loc.0 as i32, start_loc.1 as i32);
-    let mut past_state: HashSet<(i32, i32, i32, i32)> = HashSet::new();
-    past_state.insert((loc.0, loc.1, direction.0, direction.1));
+    let mut loc = (start_loc.0 as i32, start_loc.1 as i32);
+    let mut state: HashSet<(i32, i32, i32, i32)> = HashSet::new();
+    state.insert((loc.0, loc.1, direction.0, direction.1));
+
     while !is_on_boundary(&loc, grid_size) {
-        if grid[(loc.1 + direction.1) as usize][(loc.0 + direction.0) as usize] == '#' {
+        let next_element = new_grid[(loc.1 + direction.1) as usize][(loc.0 + direction.0) as usize];
+        if next_element == '#' {
             direction = rotate_90(&direction);
-            past_state.insert((loc.0, loc.1, direction.0, direction.1));
-        }
-        loc = (loc.0 + direction.0, loc.1 + direction.1);
-        if past_state.contains(&(loc.0, loc.1, direction.0, direction.1)) {
-            return true
         } else {
-            past_state.insert((loc.0, loc.1, direction.0, direction.1));
+            loc = (loc.0 + direction.0, loc.1 + direction.1);
+        }
+
+        let current_state = (loc.0, loc.1, direction.0, direction.1);
+
+        if state.contains(&current_state) {
+            return true;
+        } else {
+            state.insert(current_state);
         }
     }
+
     return false;
 }
 
-fn part_2(start_loc: &(usize, usize), grid: &Vec<Vec<char>>, grid_size: &(i32, i32), locations_visited: &HashSet<(i32, i32)>) -> usize {
+fn part_2(
+    start_loc: &(usize, usize),
+    grid: &Vec<Vec<char>>,
+    grid_size: &(i32, i32),
+    locations_visited: &HashSet<(i32, i32)>,
+) -> usize {
     // Obstacle location can be considered if not the start point or not already visited
     let mut n_cycles: usize = 0;
-    for x in 0..grid_size.0 {
-        for y in 0..grid_size.1 {
-        // println!("Trying loc: {} {}", l.0, l.1);
-        if ((x as usize) != start_loc.0) || ((y as usize) != start_loc.1){ // not at start location
-            // println!("Loc is valid");
-            let mut new_grid = grid.clone();
-            new_grid[y as usize][x as usize] = '#';
-            let is_cycle_with_new_grid = is_in_cycle(start_loc, &new_grid, grid_size);
-            if is_cycle_with_new_grid {
-                n_cycles += 1;
-                // println!("Found cycle placing obstacle at {} {}", l.0, l.1);
-            }
+    for l in locations_visited {
+        if ((l.0 as usize) != start_loc.0) || ((l.1 as usize) != start_loc.1){
+
+        let mut new_grid = grid.clone();
+        new_grid[l.1 as usize][l.0 as usize] = '#';
+        let is_cycle_with_new_grid = is_in_cycle(start_loc, new_grid, grid_size);
+        if is_cycle_with_new_grid {
+            n_cycles += 1;
+        }
     }
     }
-}
     return n_cycles;
 }
 
