@@ -81,15 +81,14 @@ fn part_2(
     // Obstacle location can be considered if not the start point or not already visited
     let mut n_cycles: usize = 0;
     for l in locations_visited {
-        if ((l.0 as usize) != start_loc.0) || ((l.1 as usize) != start_loc.1){
-
-        let mut new_grid = grid.clone();
-        new_grid[l.1 as usize][l.0 as usize] = '#';
-        let is_cycle_with_new_grid = is_in_cycle(start_loc, new_grid, grid_size);
-        if is_cycle_with_new_grid {
-            n_cycles += 1;
+        if ((l.0 as usize) != start_loc.0) || ((l.1 as usize) != start_loc.1) {
+            let mut new_grid = grid.clone();
+            new_grid[l.1 as usize][l.0 as usize] = '#';
+            let is_cycle_with_new_grid = is_in_cycle(start_loc, new_grid, grid_size);
+            if is_cycle_with_new_grid {
+                n_cycles += 1;
+            }
         }
-    }
     }
     return n_cycles;
 }
@@ -118,5 +117,8 @@ fn main() {
 
     println!("Part 1: {}", locations_visited.len());
 
-    println!("Part 2: {}", part_2(&start_loc, &grid, &grid_size, &locations_visited));
+    println!(
+        "Part 2: {}",
+        part_2(&start_loc, &grid, &grid_size, &locations_visited)
+    );
 }
