@@ -1,25 +1,25 @@
-use std::fs;
 use regex::Regex;
+use std::fs;
 
 fn read_input(is_practice: bool) -> String {
     let file_name: String = if is_practice {
         "input/practice_input.txt"
     } else {
         "input/full_input.txt"
-    }.to_string();
-    
+    }
+    .to_string();
+
     let contents = fs::read_to_string(file_name).expect("Should be able to read file");
-    return contents
+    return contents;
 }
 
 struct Claw {
     a: (i64, i64),
     b: (i64, i64),
-    prize: (i64, i64)
+    prize: (i64, i64),
 }
 
 impl Claw {
-
     fn solve(&self) -> i64 {
         let num = self.prize.0 * self.a.1 - self.prize.1 * self.a.0;
         let denom = (self.b.0 * self.a.1 - self.b.1 * self.a.0);
@@ -38,15 +38,35 @@ impl Claw {
 fn parse_input(input: String) -> Vec<Claw> {
     let claws: Vec<&str> = input.split("\n\n").collect();
     let num_re = Regex::new(r"(\d+)").unwrap();
-    let claw_nums: Vec<Vec<i64>> = claws.iter().map(|s| num_re.find_iter(s).map(|x| x.as_str().parse::<i64>().unwrap()).collect()).collect();
+    let claw_nums: Vec<Vec<i64>> = claws
+        .iter()
+        .map(|s| {
+            num_re
+                .find_iter(s)
+                .map(|x| x.as_str().parse::<i64>().unwrap())
+                .collect()
+        })
+        .collect();
 
-    return claw_nums.iter().map(|nums| Claw{ a: (nums[0], nums[1]), b:(nums[2], nums[3]), prize: (nums[4], nums[5])}).collect();
+    return claw_nums
+        .iter()
+        .map(|nums| Claw {
+            a: (nums[0], nums[1]),
+            b: (nums[2], nums[3]),
+            prize: (nums[4], nums[5]),
+        })
+        .collect();
 }
 
 fn part_2_claws(claws: &Vec<Claw>) -> Vec<Claw> {
-    return claws.iter().map(
-        |c| Claw {a: c.a, b:c.b, prize: (c.prize.0 + 10000000000000, c.prize.1 + 10000000000000)}
-    ).collect();
+    return claws
+        .iter()
+        .map(|c| Claw {
+            a: c.a,
+            b: c.b,
+            prize: (c.prize.0 + 10000000000000, c.prize.1 + 10000000000000),
+        })
+        .collect();
 }
 
 fn main() {
