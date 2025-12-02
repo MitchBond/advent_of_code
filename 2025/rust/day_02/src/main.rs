@@ -62,7 +62,7 @@ fn p2_invalid_ids_in_range(product_range: &ProductRange) -> HashSet<i64> {
 
     for i in 1..(first_half_end + 1) {
         let num_string = i.to_string();
-        let max_repeats = max((max_length / num_string.len() + 1), 2);
+        let max_repeats = max(max_length / num_string.len() + 1, 2);
         for rep in 2..(max_repeats + 1) {
             candidates.insert(num_string.repeat(rep));
         }
