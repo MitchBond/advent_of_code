@@ -21,12 +21,12 @@ fn p1_invalid_ids_in_range(product_range: &ProductRange) -> HashSet<i64> {
     let mut invalid_ids = HashSet::<i64>::new();
     let start = product_range.start.to_string();
     let end = product_range.end.to_string();
-    let first_half_start = if (start.len() > 1) {
+    let first_half_start = if start.len() > 1 {
         start.split_at(start.len() / 2).0
     } else {
         "0"
     };
-    let end_midpoint: usize = if (end.len() % 2 == 0) {
+    let end_midpoint: usize = if end.len() % 2 == 0 {
         end.len() / 2
     } else {
         end.len() / 2 + 1
