@@ -24,7 +24,6 @@ struct ProductRange {
 fn process_ranges(ranges: &str) -> Vec<ProductRange> {
     return ranges
         .lines()
-        .into_iter()
         .map(|l| l.split_once("-").unwrap())
         .map(|(start, stop)| ProductRange {
             start: str::parse(start).unwrap(),
