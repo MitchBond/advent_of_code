@@ -153,8 +153,7 @@ fn find_total_routes(start_loc: &(i32, i32), splitter_locations: &Vec<(i32, i32)
             *new_counts.entry(key).or_insert(0) += value;
         }
         any_new_splits = new_counts != locations_with_counts;
-        locations_with_counts.drain();
-        locations_with_counts.extend(new_counts.clone());
+        locations_with_counts = new_counts;
     }
     return locations_with_counts.iter().map(|(_l, c)| c).sum();
 }
